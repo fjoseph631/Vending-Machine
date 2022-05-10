@@ -1,0 +1,11 @@
+{
+    "backendPort": 8080,
+    "backendHost": "localhost",
+    "dbName": "node-login",
+    "dbServerPort": 8080,
+    "stockfishHost": "172.19.43.22",
+    "stockfishPort": 8080,
+    "stockfishUser":"frant",
+    "stockfishPW": "pw",
+    "stockfishPubKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxY7UaFdaQ53qV1kvjlYdZJhKttlkqte45BMbSdwJTddjDUA3WmYpTB1bw9El+xOLpzoZ9BVK7jCQIhRFUA2RpsjbTyyT+YPIYm02TLzQHFzTFwqh6gpWMCzqO7tWHxgKr6hVojjqgclmiy/WUZUFAh4cPi8lIGxHIiu65fzvH9GneRofw43WTtRo7zf0gZq7XhNTYr/6sKwFcSVatAuIVW+cltz98Qqig9uBZ4gaOwq3IrrSGOsA4ZV6ryk4bhx9dymvHTXOemv8cOxFlgf2ZSbrFDZZ3z6H1rodWadOSB3euwMMU2fKKXHeMU0YoLRcSKvt3nf9Tlpuir+p7HGMF frant@DESKTOP-ED7I12A"
+}

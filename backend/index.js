@@ -1,7 +1,7 @@
 //'use strict'
-const CONFIG = require('../config.json');
+const CONFIG = require('../config.json')
 const express = require('express')
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser")
 const cors = require("cors")
 // Create the express app
 const app = express(cors())
@@ -49,19 +49,19 @@ app.use(function (req, res, next) {
   const corsWhitelist = [
     'http://localhost:8080',
     'http://localhost:3000',
-  ];
+  ]
   if (corsWhitelist.indexOf(req.headers.origin) !== -1) {
-    res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Origin', req.headers.origin)
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   }
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT, DELETE')
 
-  next();
-});
+  next()
+})
 // middleware
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }))
 // Error handlers
 
 app.use(function fiveHundredHandler(err, req, res, next) {
@@ -73,20 +73,20 @@ app.use(function fiveHundredHandler(err, req, res, next) {
 
 //get all sodas
 app.get("/colas", async (req, res) => {
-  res.send(JSON.stringify(Array.from(sodas.values())));
-});
+  res.send(JSON.stringify(Array.from(sodas.values())))
+})
 
 // routes
 app.get("/colas/:id", async (req, res) => {
-  const soda = sodas.get(req.params.id);
-  res.send(JSON.stringify(soda));
-});
+  const soda = sodas.get(req.params.id)
+  res.send(JSON.stringify(soda))
+})
 const isValid = (soda) => {
   if (soda["Product Name"] !== undefined && typeof (soda.cost) === 'number' &&
     soda.MaxQuantity > 0 && soda.CurrentQuantity > 0) {
-    return true;
+    return true
   }
-  return false;
+  return false
 }
 // add new soda
 app.post("/colas", async (req, res) => {
@@ -96,32 +96,37 @@ app.post("/colas", async (req, res) => {
     if (req.body.description === undefined) {
       req.body.description = ""
     }
-    req.body.CurrentQuantity = req.body.MaxQuantity;
+    req.body.CurrentQuantity = req.body.MaxQuantity
     sodas.set(req.body["Product Name"], req.body)
     res.status(201)
-    return;
+    return
   }
   else if (valid) {
     res.send("Already here, updated instead")
     sodas.set(req.body["Product Name"], req.body)
-    return;
+    return
   }
   else {
     res.status(403)
     res.send("Invalid Type")
     return
   }
-});
+})
 // modify soda
 // add new soda
 app.put("/colas", async (req, res) => {
   {
+    console.log(req.body)
     if (!sodas.has(req.body["Product Name"])) {
+      if (req.body.Cost === undefined)
+      {
+        req.body.Cost = 1.0
+      }
       sodas.set(req.body["Product Name"], req.body)
     }
   }
   res.send("Already here, updated instead")
-});
+})
 
 app.delete("/colas", async (req, res) => {
 
@@ -135,7 +140,7 @@ app.delete("/colas", async (req, res) => {
     return
   }
 
-});
+})
 // Start server
 app.listen(CONFIG.backendPort, function (err) {
   if (err) {
