@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 function App() {
   const [updateNeeded, setUpdateNeeded] = useState(0);
   return (
-    <div className="App">
+    <div className="App" style={{display: 'flex'}}>
       <VendingMachine updateNeeded={updateNeeded} setUpdateNeeded={setUpdateNeeded} ></VendingMachine>
       <AdminPage updateNeeded={updateNeeded} setUpdateNeeded={setUpdateNeeded} ></AdminPage>
     </div>

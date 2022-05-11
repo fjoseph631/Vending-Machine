@@ -116,13 +116,20 @@ app.post("/colas", async (req, res) => {
 // add new soda
 app.put("/colas", async (req, res) => {
   {
-    console.log(req.body)
-    if (!sodas.has(req.body["Product Name"])) {
-      if (req.body.Cost === undefined)
+    if (sodas.has(req.body.item["Product Name"])) {
+      console.log(req.body.item, req.body.item.Cost)
+      if (req.body.item.Cost === undefined)
       {
         req.body.Cost = 1.0
       }
-      sodas.set(req.body["Product Name"], req.body)
+      sodas.set(req.body.item["Product Name"], req.body.item)
+      console.log("Got",sodas.get(req.body.item["Product Name"]))
+    }
+    else
+    {
+      res.status(404)
+      res.send("Invalid Key")
+      return
     }
   }
   res.send("Already here, updated instead")
