@@ -31,3 +31,6 @@ Vending Machine: For buying sodas, mostly
 Admin Page: to restock and update prices
     To make any changes enter either the new price or new amount and press enter
     Confirm/Finalize by pressing "update/restock Items" to send changes to backend and confirm update
+
+Testing 
+    only on frontend to lightly verify the app is rendering without crashing
