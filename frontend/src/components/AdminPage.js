@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect} from 'react'
 const CONFIG = require("../config.json")
 const axios = require('axios')
 const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
@@ -6,19 +6,18 @@ const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
     const [curState, setState] = useState(new Map())
     const [restockSet, setRestockSet] = useState(new Map())
     const url = "http://" + CONFIG.backendHost + ':' + CONFIG.backendPort + '/colas'
-    const updateRef = useRef(updateNeeded)
     const restockItems = () => {
         if (restockSet.size === 0) {
             alert("No selected Items")
-            return;
+            return
         }
         restockSet.forEach(async item => {
             const { status } = await axios.put(url, { item })
             if (status !== 200) {
                 alert("Oh Dear")
             }
-            var newState = curState;
-            newState.set(item["Product Name"], item);
+            var newState = curState
+            newState.set(item["Product Name"], item)
             setState(newState)
         }
         )
@@ -26,13 +25,13 @@ const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
         setUpdateNeeded(updateNeeded |= 1)
     }
     const setNewPrices = (event) => {
-        event.preventDefault();
+        event.preventDefault()
         if (restockSet instanceof Array) {
             setRestockSet(new Map())
         }
-        const key = event.target.id;
+        const key = event.target.id
         const amount = parseFloat(event.target[0].value)
-        var item;
+        var item
         if (restockSet.has(key)) {
             item = restockSet.get(key)
         }
@@ -42,18 +41,18 @@ const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
         if (item === undefined) {
             return
         }
-        item.Cost = amount;
+        item.Cost = amount
         restockSet.set(key, item)
     }
 
     const setRestockAmount = async (event) => {
-        event.preventDefault();
+        event.preventDefault()
         if (restockSet instanceof Array) {
             setRestockSet(new Map())
         }
-        const key = event.target.id;
+        const key = event.target.id
         const amount = parseInt(event.target[0].value)
-        var item;
+        var item
         if (restockSet.has(key)) {
             item = restockSet.get(key)
         }
@@ -66,7 +65,7 @@ const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
                 item = curState.get(key)
             }
         }
-        item.CurrentQuantity += amount;
+        item.CurrentQuantity += amount
         if (item.CurrentQuantity > item.MaxQuantity) {
             alert("Too Many Items resetting to current max")
             item.CurrentQuantity = item.MaxQuantity
@@ -78,9 +77,9 @@ const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
         if (data !== undefined) {
             const arrAsMap = new Map(
                 data.map(object => {
-                    return [object["Product Name"], object];
+                    return [object["Product Name"], object]
                 }),
-            );
+            )
             setState(arrAsMap)
         }
     }
@@ -88,21 +87,13 @@ const AdminPage = ({ updateNeeded, setUpdateNeeded }) => {
         setRestockSet(new Map())
     }
     useEffect(() => { getSodaState() }, [])
-    // useEffect(() => {
-    //     async function x() {
-    //         if (updateNeeded & 2) {
-    //             setUpdateNeeded(updateNeeded = updateNeeded & ~2)
-    //             setState(await getSodaState());
-    //             window.performance.reload(false)
-    //         }
-    //     }
-    // }, [updateNeeded]);
 
     const listItems = Array.from(curState.entries()).map((item) =>
         <div style={{ display: 'flow' }}>
-            <p>{item[0]} Current Price: {item[1].Cost}</p>
-            <p>{item[0]} MaxQuantity: {item[1].MaxQuantity} </p>
-            <p>CurrentQuantity: {item[1].CurrentQuantity}</p>
+            <h3>{item[0]}</h3>
+            <p>Current Price: {item[1].Cost}</p>
+            <p>Max Quantity: {item[1].MaxQuantity} </p>
+            <p>Current Quantity: {item[1].CurrentQuantity}</p>
 
             <form key={item[0] + "Amount"} id={item[0]} onSubmit={setRestockAmount}>
                 <label >Enter restock amount for {item[0]}:

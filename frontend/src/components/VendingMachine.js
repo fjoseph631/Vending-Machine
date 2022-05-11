@@ -4,7 +4,7 @@ const axios = require('axios')
 const image = require('../VendingMachine.png')
 const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
   const [curState, setState] = useState(new Map())
-  const [moneyInMachine, setMoneyInMachine] = useState(0.0)
+  const [moneyInMachine, setMoneyInMachine] = useState((0.0).toFixed(2))
   const [purchaseSet, setPurchaseSet] = useState(new Map())
   const url = "http://" + CONFIG.backendHost + ':' + CONFIG.backendPort + '/colas'
   const getSodaState = async () => {
@@ -19,9 +19,7 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
       return arrAsMap
     }
   }
-  // const listItems = Array.from(curState).map((item) =>
-  //   <button key={item["Product Name"]} onClick={this.handleClick}>
-  //   </button>)
+
   // adding to purchase set
   const handleClick = (input) => {
     if (purchaseSet instanceof Array) {
@@ -31,16 +29,15 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
   }
 
   const handleMoney = (input) => {
-    setMoneyInMachine(moneyInMachine + parseFloat(input))
+    setMoneyInMachine(parseFloat(moneyInMachine) + parseFloat(input))
   }
   const handleSubmit = (event) => {
     event.preventDefault()
-    setMoneyInMachine(parseFloat(event.target[0].value) + moneyInMachine)
-    console.log('current Money Stolen:', event.target[0].value)
+    setMoneyInMachine(parseFloat(event.target[0].value) + parseFloat(moneyInMachine))
   }
   const clearTransaction = () => {
     setPurchaseSet(new Map())
-    setMoneyInMachine(0)
+    setMoneyInMachine((0))
   }
 
   const purchaseItems = () => {
@@ -49,28 +46,26 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
       return
     }
     let remainingMoney = moneyInMachine
+    let remainingSet = new Map()
     purchaseSet.forEach(item => {
       if (item.CurrentQuantity <= 0) {
         alert("Needs More", item["Product Name"])
+        remainingMoney += item.Cost
         return
       }
       remainingMoney -= item.Cost
       if (remainingMoney < 0.0) {
         alert("Needs More Money")
-        purchaseSet.delete(item)
+        purchaseSet.delete(item["Product Name"])
+        remainingSet.set(item["Product Name"], item)
         remainingMoney += item.Cost
-
+        return
       }
       else {
         item.CurrentQuantity -= 1
       }
     })
-    console.log(purchaseSet)
-    if (remainingMoney < 0.0) {
-      alert("Needs More Money")
-      return
-    }
-    var newState = curState
+    let newState = curState
     console.log(purchaseSet.size)
     purchaseSet.forEach(async (item) => {
       const res = await axios.put(url, { item })
@@ -86,29 +81,28 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
       link.download = item["Product Name"] + ".json"
 
       link.click()
+      purchaseSet.delete(item["Product Name"])
     })
     setMoneyInMachine(remainingMoney)
     setUpdateNeeded(updateNeeded = updateNeeded |= 2)
     purchaseSet.clear()
+    remainingSet.forEach((item) => {
+      purchaseSet.set(item["Product Name"], item)
+    })
     setState(newState)
   }
 
   useEffect(() => { getSodaState() }, [])
-  // useEffect(() => {
-  //   async function x() {
-  //     if (updateNeeded & 1) {
-  //       setUpdateNeeded(updateNeeded = updateNeeded & ~1)
-  //       setState(await getSodaState())
-  //       window.performance.reload(false)
-  //     }
-  //   }
-  // }, [updateNeeded])
   const inputAmounts = [0.01, 0.05, 0.10, 0.25, 1, 5, 10, 20, 50, 100]
   const inputItems = (inputAmounts).map((item) =>
     <button key={item} onClick={() => handleMoney(item)}>{item}</button>
   )
+  const selectedItems = Array.from(purchaseSet.entries()).map((item) =>
+    <li key={item[0]}>{item[0]}</li>
+  )
+
   const listItems = Array.from(curState.entries()).map((item) =>
-    <button key={item[0]} style={{ display: 'block', justifyItems: 'center' }} onClick={() => handleClick(item[1])}>{item[0]} {item[1].Cost}</button>
+    <button key={item[0]} style={{ display: 'block', justifyContent: 'center', alignItems: 'center' }} onClick={() => handleClick(item[1])}>{item[0]} {item[1].Cost}</button>
   )
   return (
     <div className='Vending' style={{
@@ -137,20 +131,22 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
       }}>
         <img src={image} alt='vending machine' height={600} width={400} />
       </div>
-      <div style={{
+      <div className="Items" style={{
         position: 'relative',
         top: 0,
         left: 50,
         fontSize: 18,
         alignItems: 'center',
-        height: 150,
+        height: 300,
         width: 100
       }}>
         {listItems}
+        <p>Selected Items:</p>
+        {selectedItems}
       </div>
       <div className='money' style={{
         position: 'relative',
-        top: 50,
+        top: 200,
         left: -75,
         fontSize: 18,
         alignItems: 'center',
@@ -158,8 +154,7 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
         width: 100,
         marginTop: 50
       }}>
-        <p>Current Change In Machine {moneyInMachine}</p>
-
+        <p>Current Change: {moneyInMachine}</p>
         {inputItems}
         <form onSubmit={handleSubmit}>
           <label>Enter your money in USD:
@@ -171,7 +166,7 @@ const VendingMachine = ({ updateNeeded, setUpdateNeeded }) => {
       </div>
       <div className='transaction endpoints' style={{
         position: 'relative',
-        top: -150,
+        top: -50,
         left: 400,
         fontSize: 18,
         alignItems: 'center',

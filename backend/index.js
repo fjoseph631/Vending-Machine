@@ -90,7 +90,6 @@ const isValid = (soda) => {
 }
 // add new soda
 app.post("/colas", async (req, res) => {
-  console.log(req.body)
   const valid = isValid(req.body)
   if (!sodas.has(req.body["Product Name"]) && valid) {
     if (req.body.description === undefined) {
@@ -120,10 +119,9 @@ app.put("/colas", async (req, res) => {
       console.log(req.body.item, req.body.item.Cost)
       if (req.body.item.Cost === undefined)
       {
-        req.body.Cost = 1.0
+        req.body.item.Cost = 1.0
       }
       sodas.set(req.body.item["Product Name"], req.body.item)
-      console.log("Got",sodas.get(req.body.item["Product Name"]))
     }
     else
     {
